@@ -1,7 +1,8 @@
 import { Router } from "express";
 import crypto from "crypto";
 import QRCode from "qrcode";
-import { prisma } from "../db.js";
+import CheckIn from "../models/CheckIn.js";
+import User from "../models/User.js";
 import { requireAuth } from "../middleware/auth.js";
 import { pickQuote } from "../data/quotes.js";
 import { flagCheckIn } from "../data/sentiment.js";
@@ -23,10 +24,7 @@ function isYesterday(dateStr, today) {
 // Has the current user already checked in today?
 router.get("/today", async (req, res) => {
   const date = todayStr();
-  const checkIn = await prisma.checkIn.findUnique({
-    where: { userId_date: { userId: req.userId, date } },
-    include: { responses: true },
-  });
+  const checkIn = await CheckIn.findOne({ user: req.userId, date });
   res.json({ date, checkedIn: Boolean(checkIn), checkIn: checkIn || null });
 });
 
@@ -44,7 +42,7 @@ router.post("/", async (req, res) => {
   }
 
   const date = todayStr();
-  const existing = await prisma.checkIn.findUnique({ where: { userId_date: { userId: req.userId, date } } });
+  const existing = await CheckIn.findOne({ user: req.userId, date });
   if (existing) return res.status(409).json({ error: "Already checked in today", checkIn: existing });
 
   const averageMood = responses.reduce((sum, r) => sum + r.mood, 0) / responses.length;
@@ -55,41 +53,34 @@ router.post("/", async (req, res) => {
     .toString("hex")
     .toUpperCase()}`;
 
-  const checkIn = await prisma.checkIn.create({
-    data: {
-      userId: req.userId,
-      date,
-      averageMood,
-      quote,
-      rewardCode,
-      aiSentimentFlag,
-      responses: {
-        create: responses.map((r) => ({ prompt: r.prompt, word: r.word, mood: r.mood })),
-      },
-    },
-    include: { responses: true },
+  const checkIn = await CheckIn.create({
+    user: req.userId,
+    date,
+    responses,
+    averageMood,
+    quote,
+    rewardCode,
+    aiSentimentFlag,
   });
 
-  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  const user = await User.findById(req.userId);
   const wasYesterday = user.lastCheckInDate && isYesterday(user.lastCheckInDate, date);
-  const streak = wasYesterday ? user.streak + 1 : 1;
-  await prisma.user.update({ where: { id: req.userId }, data: { streak, lastCheckInDate: date } });
+  user.streak = wasYesterday ? user.streak + 1 : 1;
+  user.lastCheckInDate = date;
+  await user.save();
 
   const qrDataUrl = await QRCode.toDataURL(rewardCode, { margin: 1, width: 300 });
 
   res.status(201).json({
     checkIn,
-    streak,
+    streak: user.streak,
     qrDataUrl,
   });
 });
 
 // Journal / progress history
 router.get("/history", async (req, res) => {
-  const checkIns = await prisma.checkIn.findMany({
-    where: { userId: req.userId },
-    orderBy: { date: "asc" },
-  });
+  const checkIns = await CheckIn.find({ user: req.userId }).sort({ date: 1 }).lean();
   res.json({
     entries: checkIns.map((c) => ({
       date: c.date,
