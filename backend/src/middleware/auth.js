@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import { prisma } from "../db.js";
 
 export function requireAuth(req, res, next) {
   const header = req.headers.authorization;
@@ -17,7 +17,7 @@ export function requireAuth(req, res, next) {
 }
 
 export async function requireCaregiver(req, res, next) {
-  const user = await User.findById(req.userId);
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user || user.role !== "caregiver") {
     return res.status(403).json({ error: "Caregiver access required" });
   }

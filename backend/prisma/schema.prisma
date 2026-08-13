@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  name            String
+  email           String    @unique
+  passwordHash    String
+  role            String    @default("patient") // "patient" | "caregiver"
+  caregiverId     String?
+  caregiver       User?     @relation("CaregiverPatients", fields: [caregiverId], references: [id])
+  patients        User[]    @relation("CaregiverPatients")
+  streak          Int       @default(0)
+  lastCheckInDate String? // "YYYY-MM-DD"
+  checkIns        CheckIn[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model CheckIn {
+  id              String            @id @default(uuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date            String // "YYYY-MM-DD", one check-in per user per day
+  averageMood     Float
+  quote           String
+  rewardCode      String // encoded into the QR
+  aiSentimentFlag Boolean           @default(false)
+  responses       CheckInResponse[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([userId, date])
+}
+
+model CheckInResponse {
+  id        String  @id @default(uuid())
+  checkInId String
+  checkIn   CheckIn @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+  prompt    String // inkblot id/label
+  word      String
+  mood      Int
+}
