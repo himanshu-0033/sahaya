@@ -1,5 +1,5 @@
 export default function WordCloud({ words }) {
-  if (words.length === 0) return <p className="text-sm text-slate-400">No words submitted yet.</p>;
+  if (words.length === 0) return <p className="text-sm text-ink-muted">No words submitted yet.</p>;
 
   const max = Math.max(...words.map((w) => w.count));
 
@@ -11,7 +11,7 @@ export default function WordCloud({ words }) {
           <span
             key={w.word}
             style={{ fontSize: `${scale}rem` }}
-            className="text-slate-700 font-medium"
+            className="text-ink font-medium"
             title={`${w.count}×`}
           >
             {w.word}

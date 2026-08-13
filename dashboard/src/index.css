@@ -1,1 +1,48 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Segoe UI", system-ui, Roboto, sans-serif;
+
+  --color-bg: #f7f5f1;
+  --color-surface: #fefdfb;
+  --color-surface-muted: #f1eee8;
+  --color-border: #e6e1d8;
+  --color-ink: #322e28;
+  --color-ink-muted: #837c70;
+  --color-brand: #7a6a9c;
+  --color-brand-dark: #5f5280;
+  --color-brand-soft: #ece7f4;
+
+  --color-stable: #4f7d63;
+  --color-stable-soft: #e9f0e9;
+  --color-missed: #966b2e;
+  --color-missed-soft: #f4ede0;
+  --color-concerning: #a24f4f;
+  --color-concerning-soft: #f5e9e7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1a17;
+    --color-surface: #242119;
+    --color-surface-muted: #2b2820;
+    --color-border: #3a352b;
+    --color-ink: #ece7dd;
+    --color-ink-muted: #a89f8f;
+    --color-brand: #a493c4;
+    --color-brand-dark: #c3b4e0;
+    --color-brand-soft: #322b45;
+
+    --color-stable: #8fbb9d;
+    --color-stable-soft: #26332a;
+    --color-missed: #d1a765;
+    --color-missed-soft: #362e20;
+    --color-concerning: #d18a8a;
+    --color-concerning-soft: #3a2624;
+  }
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}

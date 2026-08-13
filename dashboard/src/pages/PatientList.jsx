@@ -24,19 +24,19 @@ export default function PatientList() {
   const sorted = [...patients].sort((a, b) => ORDER[a.status] - ORDER[b.status]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-bg">
+      <header className="border-b border-border bg-surface">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">Sahaya · Caregiver</h1>
-            <p className="text-sm text-slate-500">Signed in as {user?.name}</p>
+            <p className="font-semibold text-ink">Sahaya · Caregiver</p>
+            <p className="text-sm text-ink-muted">Signed in as {user?.name}</p>
           </div>
           <button
             onClick={() => {
               logout();
               navigate("/");
             }}
-            className="text-sm text-slate-500 hover:text-slate-800"
+            className="text-sm text-ink-muted hover:text-ink transition-colors"
           >
             Log out
           </button>
@@ -44,14 +44,14 @@ export default function PatientList() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-8">
-        <h2 className="text-xl font-semibold text-slate-900 mb-1">Your patients</h2>
-        <p className="text-sm text-slate-500 mb-6">{patients.length} assigned</p>
+        <h1 className="text-lg font-medium text-ink mb-1">Your patients</h1>
+        <p className="text-sm text-ink-muted mb-6">{patients.length} assigned</p>
 
-        {loading && <p className="text-slate-500">Loading…</p>}
-        {error && <p className="text-rose-600">{error}</p>}
+        {loading && <p className="text-ink-muted text-sm">Loading…</p>}
+        {error && <p className="text-concerning text-sm">{error}</p>}
 
         {!loading && !error && patients.length === 0 && (
-          <p className="text-slate-500">
+          <p className="text-ink-muted text-sm max-w-md">
             No patients are assigned to you yet. Have a patient sign up in the main app — they're auto-assigned to the
             first caregiver on record.
           </p>
@@ -62,16 +62,16 @@ export default function PatientList() {
             <Link
               key={p.id}
               to={`/patients/${p.id}`}
-              className="block rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+              className="block rounded-xl border border-border bg-surface p-5 hover:border-brand/40 transition-colors"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="font-medium text-slate-900">{p.name}</p>
-                  <p className="text-xs text-slate-500">{p.email}</p>
+              <div className="flex items-start justify-between mb-3 gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-ink truncate">{p.name}</p>
+                  <p className="text-xs text-ink-muted truncate">{p.email}</p>
                 </div>
                 <StatusBadge status={p.status} />
               </div>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-ink-muted">
                 {p.streak}-day streak · last check-in {p.lastCheckInDate || "never"}
               </p>
             </Link>

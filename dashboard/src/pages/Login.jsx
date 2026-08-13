@@ -31,11 +31,14 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Sahaya</h1>
-          <p className="text-sm text-slate-500">Caregiver dashboard</p>
+    <div className="min-h-screen flex items-center justify-center bg-bg">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-surface rounded-2xl border border-border p-8 space-y-4">
+        <div className="mb-2">
+          <div className="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center mb-4">
+            <span className="text-brand-dark font-semibold">S</span>
+          </div>
+          <h1 className="text-xl font-semibold text-ink">Sahaya</h1>
+          <p className="text-sm text-ink-muted">Caregiver dashboard</p>
         </div>
 
         <input
@@ -44,7 +47,7 @@ export default function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full rounded-lg border border-border bg-bg px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/40"
         />
         <input
           type="password"
@@ -52,20 +55,20 @@ export default function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full rounded-lg border border-border bg-bg px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/40"
         />
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-concerning">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-indigo-600 text-white font-medium py-2 hover:bg-indigo-700 disabled:opacity-60"
+          className="w-full rounded-lg bg-brand text-white font-medium py-2.5 hover:bg-brand-dark transition-colors disabled:opacity-60"
         >
           {loading ? "Signing in…" : "Log in"}
         </button>
 
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-ink-muted pt-2 border-t border-border">
           Create a caregiver account from the patient app's sign-up screen (check "I'm a caregiver / counselor").
         </p>
       </form>

@@ -4,7 +4,7 @@ const PAD = 24;
 
 export default function MoodChart({ history }) {
   if (history.length === 0) {
-    return <p className="text-sm text-slate-400">No check-ins yet.</p>;
+    return <p className="text-sm text-ink-muted">No check-ins yet.</p>;
   }
 
   const xStep = history.length > 1 ? (WIDTH - PAD * 2) / (history.length - 1) : 0;
@@ -29,18 +29,18 @@ export default function MoodChart({ history }) {
           x2={WIDTH - PAD}
           y1={yFor(m)}
           y2={yFor(m)}
-          stroke="#e2e8f0"
+          stroke="var(--color-border)"
           strokeWidth="1"
         />
       ))}
-      <path d={path} fill="none" stroke="#6366f1" strokeWidth="2" />
+      <path d={path} fill="none" stroke="var(--color-brand)" strokeWidth="2" />
       {points.map((p) => (
         <circle
           key={p.date}
           cx={p.x}
           cy={p.y}
           r={p.flagged ? 5 : 3.5}
-          fill={p.flagged ? "#e11d48" : "#6366f1"}
+          fill={p.flagged ? "var(--color-concerning)" : "var(--color-brand)"}
         >
           <title>
             {p.date}: mood {p.mood.toFixed(1)}
