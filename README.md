@@ -24,14 +24,29 @@ The backend falls back to an in-memory MongoDB automatically if
 `MONGODB_URI` isn't reachable, so no local Mongo install is required for a
 quick demo (data resets on restart).
 
-## Deploying
+## Deploying (all on Vercel)
 
-- **`frontend/` and `dashboard/`** deploy to Vercel as static Vite apps. When
-  importing this repo into Vercel, create two separate projects and set each
-  one's **Root Directory** to `frontend` or `dashboard`. Set the
-  `VITE_API_URL` environment variable on each project to your deployed
-  backend's URL (e.g. `https://your-api.onrender.com/api`).
-- **`backend/`** is a stateful Express server and doesn't fit Vercel's
-  serverless model well — deploy it to something like Render, Railway, or
-  Fly.io instead, with a real `MONGODB_URI` (e.g. MongoDB Atlas) and a
-  `CLIENT_ORIGIN` matching your deployed frontend's origin.
+All three apps deploy to Vercel as **separate projects** from this same repo.
+When importing the repo, create three projects and set each one's **Root
+Directory** accordingly:
+
+- **`frontend/`** and **`dashboard/`** — static Vite apps (zero-config
+  Vercel builds). Set the `VITE_API_URL` environment variable on each to your
+  deployed backend project's URL plus `/api`, e.g.
+  `https://sahaya-api.vercel.app/api`.
+- **`backend/`** — deploys as Vercel Serverless Functions, one per route
+  under `backend/api/`. Express (`src/server.js`) is kept only for local dev
+  via `npm run dev`; the actual route logic lives in `src/controllers/` and
+  is shared by both `src/routes/` (Express) and `api/` (Vercel) so the two
+  never drift. Set on the backend project:
+  - `MONGODB_URI` — a real MongoDB Atlas connection string. The in-memory
+    fallback used for local dev is disabled automatically on Vercel
+    (`process.env.VERCEL` is set), since downloading a Mongo binary at
+    request time isn't viable in a serverless function.
+  - `JWT_SECRET` — a strong random secret.
+  - `CLIENT_ORIGIN` — a comma-separated list of the deployed `frontend` and
+    `dashboard` origins, e.g.
+    `https://sahaya.vercel.app,https://sahaya-dashboard.vercel.app`.
+
+  You can exercise the serverless functions locally with `vercel dev`
+  (reads `backend/.env` the same way `npm run dev` does).
